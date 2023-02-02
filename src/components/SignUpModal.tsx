@@ -13,11 +13,9 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { FaLock, FaUserAlt, FaEnvelope, FaUserCheck } from "react-icons/fa";
+import { SignUpModalProps } from "../types";
 import SocialLogin from "./SocialLogin";
-interface SignUpModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+
 export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
   return (
     <Modal motionPreset={"scale"} isOpen={isOpen} onClose={onClose}>

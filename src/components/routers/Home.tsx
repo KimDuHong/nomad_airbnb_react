@@ -1,35 +1,26 @@
 import { Grid } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { IRoomList } from "../../types";
+import { getRooms } from "../api";
 import Room from "../Room";
 import RoomSkeleton from "../RoomSkeleton";
-interface IPhoto {
-  pk: number;
-  description: string;
-  file: string;
-}
-interface IRoom {
-  pk: number;
-  name: string;
-  city: string;
-  price: number;
-  rating: number;
-  country: string;
-  is_owner: boolean;
-  photos: IPhoto[];
-}
+import { IRoomDetail } from "../../types.d";
+
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [rooms, setRooms] = useState<IRoom[]>([]);
-  const fecthRooms = async () => {
-    const response = await fetch("http://127.0.0.1:8000/api/v1/rooms/");
-    const json = await response.json();
-    setIsLoading(false);
-    console.log(json);
-    setRooms(json);
-  };
-  useEffect(() => {
-    fecthRooms();
-  }, []);
+  const { isLoading, data } = useQuery<IRoomList[]>(["rooms"], getRooms);
+  // const [isLoading, setIsLoading] = useState(true);
+  // const [rooms, setRooms] = useState<IRoom[]>([]);
+  // const fecthRooms = async () => {
+  //   const response = await fetch("http://127.0.0.1:8000/api/v1/rooms/");
+  //   const json = await response.json();
+  //   setIsLoading(false);
+  //   console.log(json);
+  //   setRooms(json);
+  // };
+  // useEffect(() => {
+  //   fecthRooms();
+  // }, []);
+
   return (
     <Grid
       px={{
@@ -60,17 +51,19 @@ export default function Home() {
           <RoomSkeleton />
           <RoomSkeleton />
           <RoomSkeleton />
-          <RoomSkeleton />
         </>
       ) : null}
-      {rooms.map((room, index) => (
+      {data?.map((room, index) => (
         <Room
+          key={index}
+          id={room.id}
           imageUrl={
             room.photos[0]?.file ??
-            `https://source.unsplash.com/random/450x${450 + index}`
+            `https://source.unsplash.com/random/280${index}`
           }
           name={room.name}
           rating={room.rating}
+          reviews_count={room.reviews_count}
           city={room.city}
           country={room.country}
           price={room.price}
