@@ -5,6 +5,7 @@ import { IReview, IRoomDetail } from "../../types";
 import {
   Avatar,
   Box,
+  Button,
   Container,
   Grid,
   GridItem,
@@ -84,7 +85,6 @@ export default function RoomDetail() {
               <Text>방 {data?.rooms}개</Text>
               <FaRestroom />
               <Text>화장실 {data?.toilets}개</Text>
-              <Text>리뷰 {data?.reviews_count ?? 0}개</Text>
             </HStack>
           </Skeleton>
         </VStack>
@@ -96,7 +96,7 @@ export default function RoomDetail() {
           />
         </Skeleton>
       </HStack>
-      <Skeleton w="100%" isLoaded={!isLoading}>
+      <Skeleton width={"100%"} isLoaded={!isLoading}>
         <Box mt="10">
           <Heading fontSize={"md"}>
             <HStack>
@@ -105,7 +105,7 @@ export default function RoomDetail() {
             </HStack>
             <Text>{data?.reviews_count} 개의 리뷰가 있습니다.</Text>
           </Heading>
-          <Container mt={10} mx={0}>
+          <VStack alignItems="flex-start">
             <Grid templateColumns={"1fr 1fr"} gap="5" mt={5}>
               {reviewData?.map((review, index) => (
                 <VStack key={index} alignItems="flex-start">
@@ -116,18 +116,21 @@ export default function RoomDetail() {
                       size="sm"
                     />
                     <VStack alignItems={"flex-start"} spacing="-1">
-                      <Heading fontSize={"sm"}>{review.user.name}</Heading>
                       <HStack spacing={"0.5"}>
                         <FaStar size={"12"} />
                         <Text>{review.rating}</Text>
                       </HStack>
+                      <Heading fontSize={"sm"}>{review.user.name}</Heading>
                     </VStack>
                     <Text>{review.payload}</Text>
+                    <Text fontSize={"sm"} color={"gray.400"}>
+                      {review.created_at}
+                    </Text>
                   </HStack>
                 </VStack>
               ))}
             </Grid>
-          </Container>
+          </VStack>
         </Box>
       </Skeleton>
     </Box>

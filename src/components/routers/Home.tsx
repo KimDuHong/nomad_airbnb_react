@@ -4,7 +4,6 @@ import { IRoomList } from "../../types";
 import { getRooms } from "../api";
 import Room from "../Room";
 import RoomSkeleton from "../RoomSkeleton";
-import { IRoomDetail } from "../../types.d";
 
 export default function Home() {
   const { isLoading, data } = useQuery<IRoomList[]>(["rooms"], getRooms);
