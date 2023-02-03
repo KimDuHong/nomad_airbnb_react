@@ -49,14 +49,16 @@ export default function Header() {
       status: "loading",
     });
     await logOut();
-    queryClient.refetchQueries(["me"]);
-    toast.update(toastId, {
-      title: "Success log out!",
-      description: `Bye, Bye ${user.username}!`,
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
+    setTimeout(() => {
+      toast.update(toastId, {
+        title: "Success log out!",
+        description: `Bye, Bye ${user.username}!`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      queryClient.refetchQueries(["me"]);
+    }, 2000);
   };
   return (
     <Stack
