@@ -3,6 +3,7 @@ import RoomDetail from "./components/routers/RoomDetail";
 import Root from "./components/Root";
 import Home from "./components/routers/Home";
 import NotFound from "./components/routers/NotFound";
+import GitgubConfirm from "./components/routers/GithubConfirm";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,15 @@ const router = createBrowserRouter([
       {
         path: "rooms/:roomPk",
         element: <RoomDetail />,
+      },
+      {
+        path: "social",
+        children: [
+          {
+            path: "github",
+            element: <GitgubConfirm />,
+          },
+        ],
       },
     ],
   },

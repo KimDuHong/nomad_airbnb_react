@@ -52,7 +52,7 @@ export default function Header() {
     setTimeout(() => {
       toast.update(toastId, {
         title: "Success log out!",
-        description: `Bye, Bye ${user.username}!`,
+        description: `Bye, Bye ${user.name}!`,
         status: "success",
         duration: 3000,
         isClosable: true,

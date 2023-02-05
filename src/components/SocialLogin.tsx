@@ -19,8 +19,8 @@ export default function SocialLogin() {
       <VStack>
         <Button
           as={"a"}
-          href="https://github.com/login/oauth/authorize?
-          client_id=34e6a768f8bfa936a0a6"
+          href="https://github.com/login/oauth/authorize?client_id=34e6a768f8bfa936a0a6&scope=read:user,user:email"
+          // scope = 정보를 얻어오는 범위
           leftIcon={<FaGithub />}
           colorScheme={"twitter"}
           width={"100%"}
