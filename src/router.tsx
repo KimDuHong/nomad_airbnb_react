@@ -4,6 +4,7 @@ import Root from "./components/Root";
 import Home from "./components/routers/Home";
 import NotFound from "./components/routers/NotFound";
 import GitgubConfirm from "./components/routers/GithubConfirm";
+import KakaoConfirm from "./components/routers/KakaoConfirm";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
           {
             path: "github",
             element: <GitgubConfirm />,
+          },
+          {
+            path: "kakao",
+            element: <KakaoConfirm />,
           },
         ],
       },
