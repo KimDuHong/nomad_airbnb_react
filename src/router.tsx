@@ -5,6 +5,7 @@ import Home from "./components/routers/Home";
 import NotFound from "./components/routers/NotFound";
 import GitgubConfirm from "./components/routers/GithubConfirm";
 import KakaoConfirm from "./components/routers/KakaoConfirm";
+import UploadRoom from "./components/routers/UploadRoom";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <Home />,
+      },
+      {
+        path: "rooms/upload",
+        element: <UploadRoom />,
       },
       {
         path: "rooms/:roomPk",

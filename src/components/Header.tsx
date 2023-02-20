@@ -11,6 +11,7 @@ import {
   MenuList,
   Stack,
   Text,
+  ToastId,
   useColorMode,
   useColorModeValue,
   useDisclosure,
@@ -22,7 +23,8 @@ import SignUpModal from "./SignUpModal";
 import { Link } from "react-router-dom";
 import useUser from "../lib/useUser";
 import { logOut } from "./api";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRef } from "react";
 
 export default function Header() {
   const { userLoading, isLoggedIn, user } = useUser();
@@ -41,24 +43,48 @@ export default function Header() {
   const Icon = useColorModeValue(FaMoon, FaSun);
   const toast = useToast();
   const queryClient = useQueryClient();
-  const onLogOut = async () => {
-    const toastId = toast({
-      position: "top",
-      title: "Log Out...!",
-      description: "See you later!",
-      status: "loading",
-    });
-    await logOut();
-    setTimeout(() => {
-      toast.update(toastId, {
-        title: "Success log out!",
-        description: `Bye, Bye ${user.name}!`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
+  const toastId = useRef<ToastId>();
+  const mutation = useMutation(logOut, {
+    onMutate: () => {
+      toastId.current = toast({
+        position: "top",
+        title: "Log Out...!",
+        description: "See you later!",
+        status: "loading",
       });
-      queryClient.refetchQueries(["me"]);
-    }, 2000);
+    },
+    onSuccess: () => {
+      if (toastId.current) {
+        toast.update(toastId.current, {
+          title: "Success log out!",
+          description: `Bye, Bye ${user.username}!`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        queryClient.refetchQueries(["me"]);
+      }
+    },
+  });
+  const onLogOut = async () => {
+    mutation.mutate();
+    // const toastId = toast({
+    //   position: "top",
+    //   title: "Log Out...!",
+    //   description: "See you later!",
+    //   status: "loading",
+    // });
+    // await logOut();
+    // setTimeout(() => {
+    //   toast.update(toastId, {
+    //     title: "Success log out!",
+    //     description: `Bye, Bye ${user.name}!`,
+    //     status: "success",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    //   queryClient.refetchQueries(["me"]);
+    // }, 2000);
   };
   return (
     <Stack
@@ -111,6 +137,11 @@ export default function Header() {
             </MenuButton>
             <MenuList>
               <MenuItem>My Profile</MenuItem>
+              {user?.is_host ? (
+                <Link to={"/rooms/upload"}>
+                  <MenuItem>Upload Room</MenuItem>
+                </Link>
+              ) : null}
               <MenuItem onClick={onLogOut}>Log out</MenuItem>
             </MenuList>
           </Menu>
