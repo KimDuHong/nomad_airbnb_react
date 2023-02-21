@@ -66,20 +66,18 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
       });
     },
     onSuccess: (data) => {
-      setTimeout(() => {
-        queryClient.refetchQueries(["me"]);
-        if (toastId.current) {
-          toast.update(toastId.current, {
-            title: "회원가입 완료",
-            description: `Hello, ${data.username}!`,
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-          reset();
-        }
-        onClose();
-      }, 1000);
+      queryClient.refetchQueries(["me"]);
+      if (toastId.current) {
+        toast.update(toastId.current, {
+          title: "회원가입 완료",
+          description: `Hello, ${data.username}!`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        reset();
+      }
+      onClose();
     },
     onError: (error: any) => {
       const detail_error = Object.values(error.response.data);

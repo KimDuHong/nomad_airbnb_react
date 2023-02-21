@@ -20,7 +20,7 @@ export interface IRoomList {
   city: string;
   price: number;
   rating: number;
-  //   is_owner: boolean;
+  is_owner: boolean;
   reviews_count: number;
   photos: IRoomPhotoPhoto[];
 }
@@ -28,6 +28,7 @@ export interface IRoomProps {
   id: number;
   imageUrl: string;
   name: string;
+  isOwner: boolean;
   rating: number;
   reviews_count: number;
   city: string;
@@ -42,11 +43,18 @@ export interface IRoomOwner {
 }
 
 export interface IAmenity {
+  pk: number;
   name: string;
   description: string;
 }
+export interface ICategory {
+  id: number;
+  name: string;
+  kind: string;
+}
 
 export interface IRoomDetail extends IRoomList {
+  id: number;
   created_at: string;
   updated_at: string;
   rooms: number;
@@ -57,10 +65,7 @@ export interface IRoomDetail extends IRoomList {
   kind: string;
   is_owner: boolean;
   is_liked: boolean;
-  category: {
-    name: string;
-    kind: string;
-  };
+  category: ICategory;
   owner: IRoomOwner;
   amenities: IAmenity[];
 }
@@ -108,4 +113,19 @@ export interface IUsernameSuccess {
 }
 export interface IUsernameError {
   error: string;
+}
+
+export interface IUploadRoomForm {
+  name: string;
+  country: string;
+  city: string;
+  price: number;
+  rooms: number;
+  toilets: number;
+  description: string;
+  address: string;
+  pet_friendly: boolean;
+  kind: string;
+  amenities: number[];
+  category: number;
 }

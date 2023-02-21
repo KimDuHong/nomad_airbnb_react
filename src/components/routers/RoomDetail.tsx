@@ -67,9 +67,17 @@ export default function RoomDetail() {
                 }
                 w="100%"
                 h="100%"
-                // border={"8px"}
-                // objectFit={"cover"}
               />
+              {/* {data?.photos && data.photos.length > 0 ? (
+                <Image
+                  src={
+                    data?.photos[idx]?.file ??
+                    `https://source.unsplash.com/random/450x${450 + idx}/?home`
+                  }
+                  w="100%"
+                  h="100%"
+                />
+              ) : null} */}
             </Skeleton>
           </GridItem>
         ))}

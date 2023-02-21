@@ -2,6 +2,7 @@ import { QueryFunctionContext } from "@tanstack/react-query";
 import axios from "axios";
 import Cookie from "js-cookie";
 import { ISignUpVariables, IUsernameLoginVariables } from "../types";
+import { IUploadRoomForm } from "../types.d";
 const axiosInstance = axios.create({
   baseURL: "http://127.0.0.1:8000/api/v1/",
   withCredentials: true,
@@ -105,4 +106,19 @@ ISignUpVariables) =>
         },
       }
     )
+    .then((response) => response.data);
+
+export const getAmenities = () =>
+  axiosInstance.get("rooms/amenities").then((response) => response.data);
+
+export const getCategories = () =>
+  axiosInstance.get("categories").then((response) => response.data);
+
+export const uploadRoom = (variables: IUploadRoomForm) =>
+  axiosInstance
+    .post(`rooms/`, variables, {
+      headers: {
+        "X-CSRFToken": Cookie.get("csrftoken") || "",
+      },
+    })
     .then((response) => response.data);

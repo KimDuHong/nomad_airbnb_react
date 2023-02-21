@@ -2,7 +2,6 @@ import {
   Heading,
   Spinner,
   Text,
-  Toast,
   ToastId,
   useToast,
   VStack,
@@ -19,15 +18,14 @@ export default function KakaoConfirm() {
   const toastId = useRef<ToastId>();
   const mutation = useMutation(kakaoLogin, {
     onMutate: () => {
-      console.log("Kakao login start");
       toastId.current = toast({
         title: "Log In...",
         status: "loading",
         position: "top",
       });
     },
-    onSuccess: async () => {
-      await queryClient.refetchQueries(["me"]);
+    onSuccess: () => {
+      queryClient.refetchQueries(["me"]);
       if (toastId.current) {
         toast.update(toastId.current, {
           title: "Log In Success",
@@ -66,7 +64,6 @@ export default function KakaoConfirm() {
       // }
     }
   };
-
   useEffect(() => {
     confirmLogin();
   }, []);
