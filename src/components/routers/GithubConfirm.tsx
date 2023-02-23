@@ -44,6 +44,7 @@ export default function GitgubConfirm() {
           status: "error",
           position: "top",
         });
+        navigate("/");
       }
     },
   });

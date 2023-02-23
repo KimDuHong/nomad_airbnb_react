@@ -25,6 +25,7 @@ import { SignUp } from "./api";
 import SocialLogin from "./SocialLogin";
 import useUser from "../lib/useUser";
 import { useRef } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
   const textColor = useColorModeValue("red.500", "red.200");
@@ -54,6 +55,7 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
     reset,
   } = useForm<ISignUpVariables>();
   const toast = useToast();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const toastId = useRef<ToastId>();
   const mutation = useMutation(SignUp, {
@@ -78,6 +80,7 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
         reset();
       }
       onClose();
+      navigate("/signup");
     },
     onError: (error: any) => {
       const detail_error = Object.values(error.response.data);

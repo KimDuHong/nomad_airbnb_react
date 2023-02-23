@@ -129,3 +129,14 @@ export interface IUploadRoomForm {
   amenities: number[];
   category: number;
 }
+
+export interface IUploadImageVariables {
+  file: FileList;
+  uploadURL: string;
+}
+
+export interface ICreatePhotoVariables {
+  roomPk: string;
+  description: string;
+  file: string;
+}

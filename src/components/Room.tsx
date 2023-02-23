@@ -50,7 +50,7 @@ export default function Room({
               _hover={{
                 color: "red.500",
               }}
-              color="white"
+              color="red.400"
               alignItems={"center"}
             >
               <FaCamera size="20" />

@@ -5,8 +5,6 @@ import { IReview, IRoomDetail } from "../../types";
 import {
   Avatar,
   Box,
-  Button,
-  Container,
   Grid,
   GridItem,
   Heading,
@@ -16,18 +14,15 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import {
-  FaBed,
-  FaBroom,
-  FaBullhorn,
-  FaRegCommentDots,
-  FaRestroom,
-  FaStar,
-  FaToilet,
-} from "react-icons/fa";
+import { FaBed, FaRestroom, FaStar } from "react-icons/fa";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import { useState } from "react";
 
 export default function RoomDetail() {
   const { roomPk } = useParams();
+  const [dates, setDates] = useState<Date>();
+  console.log(dates);
   const { isLoading, data } = useQuery<IRoomDetail>([`rooms`, roomPk], getRoom);
   const { isLoading: isReviewLoading, data: reviewData } = useQuery<IReview[]>(
     [`rooms`, roomPk, `reviews`],
@@ -70,7 +65,7 @@ export default function RoomDetail() {
               />
               {/* {data?.photos && data.photos.length > 0 ? (
                 <Image
-                  src={
+                  src={  
                     data?.photos[idx]?.file ??
                     `https://source.unsplash.com/random/450x${450 + idx}/?home`
                   }
@@ -82,65 +77,80 @@ export default function RoomDetail() {
           </GridItem>
         ))}
       </Grid>
-      <HStack mt="5" width={"60%"} justifyContent={"space-between"}>
-        <VStack alignItems={"flex-start"}>
-          <Skeleton isLoaded={!isLoading}>
-            <Heading>House Host By {data?.owner.name}</Heading>
-          </Skeleton>
-          <Skeleton isLoaded={!isLoading}>
-            <HStack>
-              <FaBed />
-              <Text>방 {data?.rooms}개</Text>
-              <FaRestroom />
-              <Text>화장실 {data?.toilets}개</Text>
-            </HStack>
-          </Skeleton>
-        </VStack>
-        <Skeleton isLoaded={!isLoading} rounded={"3xl"}>
-          <Avatar
-            name={data?.owner.name}
-            size={"md"}
-            src={data?.owner.avatar}
-          />
-        </Skeleton>
-      </HStack>
-      <Skeleton width={"100%"} isLoaded={!isLoading}>
-        <Box mt="10">
-          <Heading fontSize={"md"}>
-            <HStack>
-              <FaStar />
-              <Text>{data?.rating}</Text>
-            </HStack>
-            <Text>{data?.reviews_count} 개의 리뷰가 있습니다.</Text>
-          </Heading>
-          <VStack alignItems="flex-start">
-            <Grid templateColumns={"1fr 1fr"} gap="5" mt={5}>
-              {reviewData?.map((review, index) => (
-                <VStack key={index} alignItems="flex-start">
-                  <HStack alignItems={"flex-start"}>
-                    <Avatar
-                      name={review.user.name}
-                      src={review.user.avatar}
-                      size="sm"
-                    />
-                    <VStack alignItems={"flex-start"} spacing="-1">
-                      <HStack spacing={"0.5"}>
-                        <FaStar size={"12"} />
-                        <Text>{review.rating}</Text>
+      <Grid gap={"20"} templateColumns={"repeat(2,1fr)"}>
+        <Box>
+          <HStack mt="5" justifyContent={"space-between"}>
+            <VStack alignItems={"flex-start"}>
+              <Skeleton isLoaded={!isLoading}>
+                <Heading>House Host By {data?.owner.name}</Heading>
+              </Skeleton>
+              <Skeleton isLoaded={!isLoading}>
+                <HStack>
+                  <FaBed />
+                  <Text>방 {data?.rooms}개</Text>
+                  <FaRestroom />
+                  <Text>화장실 {data?.toilets}개</Text>
+                </HStack>
+              </Skeleton>
+            </VStack>
+            <Skeleton isLoaded={!isLoading} rounded={"3xl"}>
+              <Avatar
+                name={data?.owner.name}
+                size={"md"}
+                src={data?.owner.avatar}
+              />
+            </Skeleton>
+          </HStack>
+          <Skeleton width={"100%"} isLoaded={!isLoading}>
+            <Box mt="10">
+              <Heading fontSize={"md"}>
+                <HStack>
+                  <FaStar />
+                  <Text>{data?.rating}</Text>
+                </HStack>
+                <Text>{data?.reviews_count} 개의 리뷰가 있습니다.</Text>
+              </Heading>
+              <VStack alignItems="flex-start">
+                <Grid templateColumns={"1fr 1fr"} gap="5" mt={5}>
+                  {reviewData?.map((review, index) => (
+                    <VStack key={index} alignItems="flex-start">
+                      <HStack alignItems={"flex-start"}>
+                        <Avatar
+                          name={review.user.name}
+                          src={review.user.avatar}
+                          size="sm"
+                        />
+                        <VStack alignItems={"flex-start"} spacing="-1">
+                          <HStack spacing={"0.5"}>
+                            <FaStar size={"12"} />
+                            <Text>{review.rating}</Text>
+                          </HStack>
+                          <Heading fontSize={"sm"}>{review.user.name}</Heading>
+                        </VStack>
+                        <Text>{review.payload}</Text>
+                        <Text fontSize={"sm"} color={"gray.400"}>
+                          {review.created_at}
+                        </Text>
                       </HStack>
-                      <Heading fontSize={"sm"}>{review.user.name}</Heading>
                     </VStack>
-                    <Text>{review.payload}</Text>
-                    <Text fontSize={"sm"} color={"gray.400"}>
-                      {review.created_at}
-                    </Text>
-                  </HStack>
-                </VStack>
-              ))}
-            </Grid>
-          </VStack>
+                  ))}
+                </Grid>
+              </VStack>
+            </Box>
+          </Skeleton>
         </Box>
-      </Skeleton>
+        <Box mt={"10"}>
+          <Calendar
+            selectRange
+            minDate={new Date()}
+            maxDate={new Date(Date.now() + 60 * 60 * 24 * 7 * 4 * 6 * 1000)}
+            minDetail="month"
+            next2Label={null}
+            prev2Label={null}
+            onChange={setDates}
+          />
+        </Box>
+      </Grid>
     </Box>
   );
 }
