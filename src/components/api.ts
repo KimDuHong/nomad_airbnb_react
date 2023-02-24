@@ -1,6 +1,7 @@
 import { QueryFunctionContext } from "@tanstack/react-query";
 import axios from "axios";
 import Cookie from "js-cookie";
+import { formatDate } from "../lib/utils";
 import {
   ICreatePhotoVariables,
   ISignUpVariables,
@@ -165,3 +166,20 @@ export const createPhoto = ({
       }
     )
     .then((response) => response.data);
+type CheckBookingQueryKey = [string, string?, Date[]?];
+export const checkBooking = ({
+  queryKey,
+}: QueryFunctionContext<CheckBookingQueryKey>) => {
+  const [_, roomPk, dates] = queryKey;
+  if (dates) {
+    const [firstDate, secondDate] = dates;
+    const checkIn = formatDate(firstDate);
+    // const [checkOut] = secondDate.toJSON().split("T");
+    const checkOut = formatDate(secondDate);
+    return axiosInstance
+      .get(
+        `rooms/${roomPk}/bookings/check?check_in=${checkIn}&check_out=${checkOut}`
+      )
+      .then((response) => response.data);
+  }
+};

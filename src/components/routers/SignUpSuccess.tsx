@@ -10,7 +10,6 @@ import {
 import { FaCheck } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-
 export default function SignUpSuceess() {
   const navigate = useNavigate();
   const [time, setTime] = useState(10);

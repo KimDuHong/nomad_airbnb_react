@@ -1,10 +1,11 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getRoom, getRoomReviews } from "../api";
+import { checkBooking, getRoom, getRoomReviews } from "../api";
 import { IReview, IRoomDetail } from "../../types";
 import {
   Avatar,
   Box,
+  Button,
   Grid,
   GridItem,
   Heading,
@@ -16,18 +17,36 @@ import {
 } from "@chakra-ui/react";
 import { FaBed, FaRestroom, FaStar } from "react-icons/fa";
 import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
-import { useState } from "react";
+// import "react-calendar/dist/Calendar.css";
+import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
+import "../calendar.css";
 
 export default function RoomDetail() {
   const { roomPk } = useParams();
-  const [dates, setDates] = useState<Date>();
-  console.log(dates);
+  const [dates, setDates] = useState<Date[]>();
   const { isLoading, data } = useQuery<IRoomDetail>([`rooms`, roomPk], getRoom);
   const { isLoading: isReviewLoading, data: reviewData } = useQuery<IReview[]>(
     [`rooms`, roomPk, `reviews`],
     getRoomReviews
   );
+  const { data: checkBookingData, isLoading: isCheckingBooking } = useQuery(
+    ["check", roomPk, dates],
+    checkBooking,
+    {
+      cacheTime: 0,
+      enabled: dates !== undefined,
+    }
+  );
+  console.log(checkBookingData, isCheckingBooking);
+  // useEffect(() => {
+  //   if (dates) {
+  // const [firstDate, secondDate] = dates;
+  // const [checkIn] = firstDate.toJSON().split("T");
+  // const [checkOut] = secondDate.toJSON().split("T");
+  // console.log(checkIn, checkOut);
+  //   }
+  // }, [dates]);
   return (
     <Box
       h="60vh"
@@ -37,6 +56,9 @@ export default function RoomDetail() {
         lg: 40,
       }}
     >
+      <Helmet>
+        <title>{data ? data.name : "Loading..."}</title>
+      </Helmet>
       <Skeleton isLoaded={!isLoading} h={43} width={"50%"}>
         <Heading>{data?.name}</Heading>
       </Skeleton>
@@ -139,17 +161,36 @@ export default function RoomDetail() {
             </Box>
           </Skeleton>
         </Box>
-        <Box mt={"10"}>
-          <Calendar
-            selectRange
-            minDate={new Date()}
-            maxDate={new Date(Date.now() + 60 * 60 * 24 * 7 * 4 * 6 * 1000)}
-            minDetail="month"
-            next2Label={null}
-            prev2Label={null}
-            onChange={setDates}
-          />
-        </Box>
+        <VStack pt={"10"} spacing="5">
+          <Skeleton textAlign={"center"} w={"100%"} isLoaded={!isLoading}>
+            <Heading fontSize={"2xl"}>예약</Heading>
+          </Skeleton>
+          <Skeleton isLoaded={!isLoading}>
+            <Calendar
+              // goToRangeStartOnSelect
+              selectRange
+              minDate={new Date()}
+              maxDate={new Date(Date.now() + 60 * 60 * 24 * 7 * 4 * 6 * 1000)}
+              minDetail="month"
+              next2Label={null}
+              prev2Label={null}
+              onChange={setDates}
+            />
+          </Skeleton>
+          {!isCheckingBooking && !checkBookingData?.ok ? (
+            <Text color="red.500">Sorry, Can't book on those dates.</Text>
+          ) : null}
+          <Skeleton w={"100%"} isLoaded={!isLoading}>
+            <Button
+              isDisabled={!checkBookingData?.ok}
+              isLoading={isCheckingBooking && dates !== undefined}
+              w="100%"
+              colorScheme={"red"}
+            >
+              Make Booking
+            </Button>
+          </Skeleton>
+        </VStack>
       </Grid>
     </Box>
   );
