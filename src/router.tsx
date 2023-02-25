@@ -8,6 +8,7 @@ import KakaoConfirm from "./components/routers/KakaoConfirm";
 import UploadRoom from "./components/routers/UploadRoom";
 import UploadPhotos from "./components/routers/UploadPhotos";
 import SignUpSuceess from "./components/routers/SignUpSuccess";
+import { RoomUpdate } from "./components/routers/RoomUpdate";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: "rooms/:roomPk",
         element: <RoomDetail />,
+      },
+      {
+        path: "rooms/:roomPk/update",
+        element: <RoomUpdate />,
       },
       {
         path: "rooms/:roomPk/photos",

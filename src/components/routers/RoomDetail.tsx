@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { checkBooking, getRoom, getRoomReviews } from "../api";
 import { IReview, IRoomDetail } from "../../types";
@@ -25,7 +25,14 @@ import "../calendar.css";
 export default function RoomDetail() {
   const { roomPk } = useParams();
   const [dates, setDates] = useState<Date[]>();
-  const { isLoading, data } = useQuery<IRoomDetail>([`rooms`, roomPk], getRoom);
+  const { isLoading, data } = useQuery<IRoomDetail>(
+    [`rooms`, roomPk],
+    getRoom,
+    {
+      staleTime: 5000,
+      cacheTime: Infinity,
+    }
+  );
   const { isLoading: isReviewLoading, data: reviewData } = useQuery<IReview[]>(
     [`rooms`, roomPk, `reviews`],
     getRoomReviews
@@ -38,7 +45,6 @@ export default function RoomDetail() {
       enabled: dates !== undefined,
     }
   );
-  console.log(checkBookingData, isCheckingBooking);
   // useEffect(() => {
   //   if (dates) {
   // const [firstDate, secondDate] = dates;
@@ -59,8 +65,15 @@ export default function RoomDetail() {
       <Helmet>
         <title>{data ? data.name : "Loading..."}</title>
       </Helmet>
-      <Skeleton isLoaded={!isLoading} h={43} width={"50%"}>
-        <Heading>{data?.name}</Heading>
+      <Skeleton isLoaded={!isLoading} h={43} width={"100%"}>
+        <HStack justifyContent={"space-between"}>
+          <Heading>{data?.name}</Heading>
+          {data?.is_owner ? (
+            <Link to={`/rooms/${data.id}/update`}>
+              <Button colorScheme={"red"}>수정</Button>
+            </Link>
+          ) : null}
+        </HStack>
       </Skeleton>
       <Grid
         rounded={"lg"}
@@ -162,9 +175,6 @@ export default function RoomDetail() {
           </Skeleton>
         </Box>
         <VStack pt={"10"} spacing="5">
-          <Skeleton textAlign={"center"} w={"100%"} isLoaded={!isLoading}>
-            <Heading fontSize={"2xl"}>예약</Heading>
-          </Skeleton>
           <Skeleton isLoaded={!isLoading}>
             <Calendar
               // goToRangeStartOnSelect
@@ -187,7 +197,7 @@ export default function RoomDetail() {
               w="100%"
               colorScheme={"red"}
             >
-              Make Booking
+              예약하기
             </Button>
           </Skeleton>
         </VStack>
