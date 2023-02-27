@@ -3,6 +3,7 @@ import axios from "axios";
 import Cookie from "js-cookie";
 import { formatDate } from "../lib/utils";
 import {
+  IChatRoomList,
   ICreatePhotoVariables,
   ISignUpVariables,
   IUploadImageVariables,
@@ -48,7 +49,13 @@ export const logOut = () =>
 // }
 
 export const getMe = () =>
-  axiosInstance.get("users/me").then((response) => response.data);
+  axiosInstance
+    .get("users/me", {
+      headers: {
+        "X-CSRFtoken": Cookie.get("csrf_token") || "",
+      },
+    })
+    .then((response) => response.data);
 
 export const githubLogin = (code: string) =>
   axiosInstance
@@ -182,4 +189,10 @@ export const checkBooking = ({
       )
       .then((response) => response.data);
   }
+};
+type CheckChatRoomQueryKey = [string, number];
+export const getChatRoomList = () => {
+  return axiosInstance
+    .get(`/direct_msgs/roomlist`)
+    .then((response) => response.data);
 };

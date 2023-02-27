@@ -140,3 +140,15 @@ export interface ICreatePhotoVariables {
   description: string;
   file: string;
 }
+
+export interface IChatRoomOwner {
+  avatar: string;
+  name: string;
+  username: string;
+}
+export interface IChatRoomList {
+  id: string;
+  users: IChatRoomOwner[];
+  lastMessage: string;
+  updated_at: string;
+}

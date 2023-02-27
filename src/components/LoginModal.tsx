@@ -66,7 +66,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     onSuccess: (data) => {
       toast({
         title: "Log In Success",
-        description: `Welcome ${user.username}!`,
+        description: `Welcome!`,
         status: "success",
         position: "top",
       });

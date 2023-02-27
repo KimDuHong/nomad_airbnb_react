@@ -9,6 +9,8 @@ import UploadRoom from "./components/routers/UploadRoom";
 import UploadPhotos from "./components/routers/UploadPhotos";
 import SignUpSuceess from "./components/routers/SignUpSuccess";
 import { RoomUpdate } from "./components/routers/RoomUpdate";
+import ChatList from "./components/routers/ChatList";
+import ChatRoom from "./components/routers/ChatRoom";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +23,7 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/signup",
+        path: "signup",
         element: <SignUpSuceess />,
       },
       {
@@ -40,6 +42,17 @@ const router = createBrowserRouter([
         path: "rooms/:roomPk/photos",
         element: <UploadPhotos />,
       },
+      {
+        path: "/chat",
+        element: <ChatList />,
+        children: [
+          {
+            path: ":chatRoomPk",
+            element: <ChatRoom />,
+          },
+        ],
+      },
+
       {
         path: "social",
         children: [

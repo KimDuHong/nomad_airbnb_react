@@ -137,6 +137,9 @@ export default function Header() {
             </MenuButton>
             <MenuList>
               <MenuItem>My Profile</MenuItem>
+              <Link to={`/chat`}>
+                <MenuItem>Chat</MenuItem>
+              </Link>
               {user?.is_host ? (
                 <Link to={"/rooms/upload"}>
                   <MenuItem>Upload Room</MenuItem>

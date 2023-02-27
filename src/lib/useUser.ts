@@ -4,7 +4,7 @@ import { getMe } from "../components/api";
 export default function useUser() {
   const { isLoading, data, isError } = useQuery(["me"], getMe, {
     retry: false,
-    staleTime: 5000,
+    // staleTime: 5000,
   });
   /*재시도를 막음*/
   return {
