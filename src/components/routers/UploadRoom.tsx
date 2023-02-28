@@ -20,7 +20,7 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { FaBed, FaDollarSign, FaToilet } from "react-icons/fa";
 import { IAmenity, ICategory, IUploadRoomForm } from "../../types";
-import { getAmenities, getCategories, uploadRoom } from "../api";
+import { getAmenities, getCategories, uploadRoom } from "../../api";
 import useHostOnlyPage from "../HostOnlyPage";
 import HostOnlyPage from "../HostOnlyPage";
 import ProtectedPage from "../ProtectedPage";

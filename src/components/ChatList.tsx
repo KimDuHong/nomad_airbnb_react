@@ -42,13 +42,7 @@ export default function ChatList({
         <VStack alignItems="flex-start" ml={5}>
           <HStack w="100%" justifyContent="space-between">
             <HStack spacing={"8"}>
-              <Avatar
-                name={
-                  users[0] === user.username
-                    ? users[0].username
-                    : users[1].username
-                }
-              />
+              <Avatar name={users[0].username} />
               <Box>
                 <Heading size="sm">{users[1].username} 님의 채팅방</Heading>
                 <Text fontSize="sm" color="gray.500">

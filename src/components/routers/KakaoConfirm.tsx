@@ -9,7 +9,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { kakaoLogin } from "../api";
+import { kakaoLogin } from "../../api";
 export default function KakaoConfirm() {
   const { search } = useLocation();
   const queryClient = useQueryClient();

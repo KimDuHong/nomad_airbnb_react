@@ -16,10 +16,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Outlet, useNavigate } from "react-router-dom";
 import useUser from "../../lib/useUser";
 import { IChatRoomList } from "../../types";
-import { getChatRoomList } from "../api";
+import { getChatRoomList } from "../../api";
 import ProtectedPage from "../ProtectedPage";
 import Chat from "../ChatList";
-import { m } from "framer-motion";
 
 export default function ChatList() {
   const navigate = useNavigate();
@@ -40,8 +39,9 @@ export default function ChatList() {
               <Text>Loading...</Text>
             ) : (
               <List spacing={4}>
-                {data?.map((room: IChatRoomList) => (
+                {data?.map((room: IChatRoomList, index: number) => (
                   <Chat
+                    key={index}
                     id={room.id}
                     users={room.users}
                     lastMessage={room.lastMessage}

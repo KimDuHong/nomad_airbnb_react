@@ -27,11 +27,10 @@ import {
   IUsernameSuccess,
   LoginModalProps,
 } from "../types";
-import { usernameLogIn } from "./api";
+import { usernameLogIn } from "../api";
 import SocialLogin from "./SocialLogin";
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
-  const { user } = useUser();
   // const [username, setUsername] = useState("");
   // const [password, setPassword] = useState("");
   // const onChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
@@ -70,9 +69,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         status: "success",
         position: "top",
       });
-      queryClient.refetchQueries(["me"]);
       onClose();
       reset();
+      queryClient.refetchQueries(["me"]);
+      queryClient.refetchQueries(["rooms"]);
     },
     onError: (error) => {
       reset();

@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMe } from "../components/api";
-
+import { getMe } from "../api";
+import { IUser } from "../types";
 export default function useUser() {
-  const { isLoading, data, isError } = useQuery(["me"], getMe, {
+  const { isLoading, data, isError } = useQuery<IUser>(["me"], getMe, {
     retry: false,
-    // staleTime: 5000,
+    refetchOnWindowFocus: false,
   });
   /*재시도를 막음*/
   return {

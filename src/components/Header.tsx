@@ -20,9 +20,9 @@ import {
 import { FaAirbnb, FaMoon, FaSun } from "react-icons/fa";
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useUser from "../lib/useUser";
-import { logOut } from "./api";
+import { logOut } from "../api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 
@@ -44,6 +44,7 @@ export default function Header() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const toastId = useRef<ToastId>();
+  const navigate = useNavigate();
   const mutation = useMutation(logOut, {
     onMutate: () => {
       toastId.current = toast({
@@ -57,12 +58,14 @@ export default function Header() {
       if (toastId.current) {
         toast.update(toastId.current, {
           title: "Success log out!",
-          description: `Bye, Bye ${user.username}!`,
+          description: `Bye, Bye ${user?.username}!`,
           status: "success",
           duration: 3000,
           isClosable: true,
         });
         queryClient.refetchQueries(["me"]);
+        queryClient.refetchQueries(["rooms"]);
+        navigate("/");
       }
     },
   });

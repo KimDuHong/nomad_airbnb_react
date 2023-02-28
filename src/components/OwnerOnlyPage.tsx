@@ -1,6 +1,6 @@
 import { QueryCache, useQuery } from "@tanstack/react-query";
 import { IRoomDetail } from "../types";
-import { getRoom } from "./api";
+import { getRoom } from "../api";
 import useUser from "../lib/useUser";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";

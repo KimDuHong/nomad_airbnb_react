@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { checkBooking, getRoom, getRoomReviews } from "../api";
+import { checkBooking, getRoom, getRoomReviews } from "../../api";
 import { IReview, IRoomDetail } from "../../types";
 import {
   Avatar,

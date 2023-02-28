@@ -13,7 +13,7 @@ import { useParams } from "react-router-dom";
 import ProtectedPage from "../ProtectedPage";
 import useHostOnlyPage from "../HostOnlyPage";
 import { useMutation } from "@tanstack/react-query";
-import { createPhoto, getUploadURL, uploadImage } from "../api";
+import { createPhoto, getUploadURL, uploadImage } from "../../api";
 import { title } from "process";
 
 interface IForm {

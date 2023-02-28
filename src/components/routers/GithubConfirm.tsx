@@ -10,7 +10,7 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { githubLogin } from "../api";
+import { githubLogin } from "../../api";
 export default function GitgubConfirm() {
   const { search } = useLocation();
   const queryClient = useQueryClient();
