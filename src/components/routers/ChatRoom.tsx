@@ -12,6 +12,7 @@ type Message = {
   sender: IChatRoomOwner;
   text: string;
   chatting_count: number;
+  is_read: boolean;
 };
 
 const ChatRoom = (): JSX.Element => {
@@ -72,6 +73,7 @@ const ChatRoom = (): JSX.Element => {
     // Clear messages when chat room changes
     setMessages([]);
   }, [chatRoomPk]);
+  console.log(messages);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <VStack spacing={5}>
@@ -92,11 +94,19 @@ const ChatRoom = (): JSX.Element => {
             messages.map((message, i) =>
               message.sender.username === sender ? (
                 <Box key={i} mb={4}>
-                  <ChatMessage message={message} isSentByCurrentUser={true} />
+                  <ChatMessage
+                    message={message}
+                    isSentByCurrentUser={true}
+                    isRead={message.is_read}
+                  />
                 </Box>
               ) : (
                 <Box key={i} mb={4}>
-                  <ChatMessage message={message} isSentByCurrentUser={false} />
+                  <ChatMessage
+                    message={message}
+                    isSentByCurrentUser={false}
+                    isRead={message.is_read}
+                  />
                 </Box>
               )
             )

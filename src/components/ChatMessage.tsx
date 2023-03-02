@@ -15,9 +15,14 @@ type Message = {
 type ChatMessageProps = {
   message: Message;
   isSentByCurrentUser: boolean;
+  isRead: boolean;
 };
 
-const ChatMessage = ({ message, isSentByCurrentUser }: ChatMessageProps) => {
+const ChatMessage = ({
+  message,
+  isSentByCurrentUser,
+  isRead,
+}: ChatMessageProps) => {
   const align = isSentByCurrentUser ? "flex-end" : "flex-start";
   const borderRadius = isSentByCurrentUser
     ? "10px 0 10px 10px"
@@ -39,6 +44,11 @@ const ChatMessage = ({ message, isSentByCurrentUser }: ChatMessageProps) => {
         <Box>
           <strong>{message.sender.username}</strong>:
         </Box>
+      )}
+      {isRead || !isSentByCurrentUser ? null : (
+        <Text fontSize={"sm"} mt={3}>
+          1
+        </Text>
       )}
       <Box bg={bg} p={2} rounded="md" maxWidth="80%" wordBreak="break-word">
         <LightMode>

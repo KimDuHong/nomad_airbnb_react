@@ -1,17 +1,4 @@
-import {
-  Box,
-  Container,
-  Flex,
-  Grid,
-  Heading,
-  HStack,
-  List,
-  ListItem,
-  Stack,
-  Text,
-  useDisclosure,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Container, Grid, Heading, List, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, useNavigate } from "react-router-dom";
 import useUser from "../../lib/useUser";
@@ -33,24 +20,26 @@ export default function ChatList() {
   const [chatRoomList, setChatRoomList] = useState<IChatRoomList[]>([]);
 
   useEffect(() => {
+    setChatRoomList(data);
+  }, [isLoading]);
+
+  useEffect(() => {
     if (user) {
       const socketUrl = `ws://127.0.0.1:8000/notifications?user=${user.id}`;
       socketRef.current = new WebSocket(socketUrl);
       setSocket(socketRef.current);
 
       socketRef.current.onopen = () => {
-        console.log("successfully");
         socketRef.current?.send(JSON.stringify({ type: "loadChatHistory" }));
       };
 
       socketRef.current.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        console.log(data);
-        if (data.type === "chat_message") {
+        const new_chat = JSON.parse(event.data);
+        if (new_chat.type === "new_data") {
           // Update the chat room list with the new last message
-          const updatedChatRoomList = chatRoomList.map((room) => {
-            if (room.id === data.room_id) {
-              return { ...room, lastMessage: data.text };
+          const updatedChatRoomList = chatRoomList.map((room: any) => {
+            if (room.id === new_chat.room_id) {
+              return { ...room, lastMessage: new_chat.text };
             } else {
               return room;
             }
@@ -77,10 +66,11 @@ export default function ChatList() {
               <Text>Loading...</Text>
             ) : (
               <List spacing={4}>
-                {data?.map((room: IChatRoomList, index: number) => (
+                {chatRoomList?.map((room: IChatRoomList, index: number) => (
                   <Chat
                     key={index}
                     id={room.id}
+                    unread_messages={room.unread_messages}
                     users={room.users}
                     lastMessage={room.lastMessage}
                     updated_at={room.updated_at}

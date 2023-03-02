@@ -152,4 +152,5 @@ export interface IChatRoomList {
   users: IChatRoomOwner[];
   lastMessage: string;
   updated_at: string;
+  unread_messages: number;
 }

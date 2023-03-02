@@ -186,6 +186,7 @@ export const checkBooking = ({
   }
 };
 type CheckChatRoomQueryKey = [string, number];
+
 export const getChatRoomList = () => {
   return axiosInstance
     .get(`/direct_msgs/roomlist`)
