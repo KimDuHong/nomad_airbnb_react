@@ -4,7 +4,6 @@ import {
   LightMode,
   Text,
   useColorModeValue,
-  VStack,
 } from "@chakra-ui/react";
 import { IChatRoomOwner } from "../types";
 

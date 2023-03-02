@@ -1,12 +1,22 @@
 import { useState, useEffect, useRef } from "react";
-import { Box, Button, Grid, Heading, Input, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Grid,
+  Heading,
+  HStack,
+  Input,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useUser from "../../lib/useUser";
 import ChatMessage from "../ChatMessage";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getChatList } from "../../api";
 import { IChatRoomOwner } from "../../types";
+import { isDisabled } from "@testing-library/user-event/dist/utils";
 
 type Message = {
   sender: IChatRoomOwner;
@@ -25,7 +35,14 @@ const ChatRoom = (): JSX.Element => {
   const sender = user?.username;
   const QueryClient = useQueryClient();
   const chatBoxRef = useRef<HTMLDivElement>(null);
-
+  const [serverConnect, setServerConnect] = useState(true);
+  useEffect(() => {
+    {
+      socketRef.current?.readyState
+        ? setServerConnect(true)
+        : setServerConnect(false);
+    }
+  }, [socketRef.current?.readyState]);
   const onSubmit = () => {
     const text = watch("text");
     if (!text) return;
@@ -38,10 +55,10 @@ const ChatRoom = (): JSX.Element => {
     socketRef.current = new WebSocket(`ws://127.0.0.1:8000/ws/${chatRoomPk}`);
     setSocket(socketRef.current);
 
-    // Load chat history
-    socketRef.current.onopen = () => {
-      socketRef.current?.send(JSON.stringify({ type: "loadChatHistory" }));
-    };
+    // // Load chat history
+    // socketRef.current.onopen = () => {
+    //   socketRef.current?.send(JSON.stringify({ type: "loadChatHistory" }));
+    // };
 
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data) as Message;
@@ -73,16 +90,24 @@ const ChatRoom = (): JSX.Element => {
     // Clear messages when chat room changes
     setMessages([]);
   }, [chatRoomPk]);
-  console.log(messages);
+  if (socketRef.current?.readyState) {
+    console.log("True");
+  } else {
+    console.log("False");
+  }
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <Link to="/chat">
+        <Button position={"absolute"} left={"50%"} colorScheme="red">
+          접기
+        </Button>
+      </Link>
       <VStack spacing={5}>
         <Box
           borderWidth="1px"
           borderColor="gray.200"
           borderRadius="md"
           p={4}
-          mt={10}
           h={"65vh"}
           w={"100%"}
           overflowY="scroll"
@@ -119,8 +144,17 @@ const ChatRoom = (): JSX.Element => {
           gap="5"
           alignItems="center"
         >
-          <Input {...register("text", { required: true })} />
-          <Button type="submit">Send</Button>
+          <Input
+            {...register("text", { required: true })}
+            isDisabled={!serverConnect}
+            placeholder={
+              serverConnect ? "채팅을 입력하세요." : "서버 상태를 확인하세요."
+            }
+          />
+
+          <Button type="submit" isDisabled={!serverConnect}>
+            Send
+          </Button>
         </Grid>
       </VStack>
     </form>
