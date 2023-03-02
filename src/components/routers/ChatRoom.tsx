@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from "react";
-import { Box, Button, Grid, Input, VStack } from "@chakra-ui/react";
+import { Box, Button, Grid, Heading, Input, VStack } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import useUser from "../../lib/useUser";
 import ChatMessage from "../ChatMessage";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getChatList } from "../../api";
+import { IChatRoomOwner } from "../../types";
 
 type Message = {
-  sender: string;
+  sender: IChatRoomOwner;
   text: string;
   chatting_count: number;
 };
@@ -20,8 +22,8 @@ const ChatRoom = (): JSX.Element => {
   const socketRef = useRef<WebSocket | null>(null);
   const { user } = useUser();
   const sender = user?.username;
+  const QueryClient = useQueryClient();
   const chatBoxRef = useRef<HTMLDivElement>(null);
-  const queryClient = useQueryClient();
 
   const onSubmit = () => {
     const text = watch("text");
@@ -48,12 +50,17 @@ const ChatRoom = (): JSX.Element => {
         setMessages((prevMessages) => [...prevMessages, data]);
       }
     };
-
     // Clean up
     return () => {
       socketRef.current?.close();
     };
   }, [chatRoomPk]);
+
+  const { isLoading, data } = useQuery<Message[]>(
+    [`chatList`, chatRoomPk],
+    getChatList,
+    { onSuccess: setMessages }
+  );
 
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -79,15 +86,19 @@ const ChatRoom = (): JSX.Element => {
           overflowY="scroll"
           ref={chatBoxRef}
         >
-          {messages.map((message, i) =>
-            message.sender === sender ? (
-              <Box key={i} mb={4}>
-                <ChatMessage message={message} isSentByCurrentUser={true} />
-              </Box>
-            ) : (
-              <Box key={i} mb={4}>
-                <ChatMessage message={message} isSentByCurrentUser={false} />
-              </Box>
+          {isLoading ? (
+            <Heading>ChatLoading...</Heading>
+          ) : (
+            messages.map((message, i) =>
+              message.sender.username === sender ? (
+                <Box key={i} mb={4}>
+                  <ChatMessage message={message} isSentByCurrentUser={true} />
+                </Box>
+              ) : (
+                <Box key={i} mb={4}>
+                  <ChatMessage message={message} isSentByCurrentUser={false} />
+                </Box>
+              )
             )
           )}
         </Box>

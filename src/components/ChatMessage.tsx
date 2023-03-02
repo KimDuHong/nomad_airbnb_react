@@ -6,9 +6,10 @@ import {
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
+import { IChatRoomOwner } from "../types";
 
 type Message = {
-  sender: string;
+  sender: IChatRoomOwner;
   text: string;
 };
 type ChatMessageProps = {
@@ -36,7 +37,7 @@ const ChatMessage = ({ message, isSentByCurrentUser }: ChatMessageProps) => {
     >
       {isSentByCurrentUser ? null : (
         <Box>
-          <strong>{message.sender}</strong>:
+          <strong>{message.sender.username}</strong>:
         </Box>
       )}
       <Box bg={bg} p={2} rounded="md" maxWidth="80%" wordBreak="break-word">

@@ -78,6 +78,7 @@ export interface IReview {
 }
 
 export interface IUser {
+  id: number;
   last_login: string;
   username: string;
   email: string;

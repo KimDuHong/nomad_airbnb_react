@@ -191,3 +191,12 @@ export const getChatRoomList = () => {
     .get(`/direct_msgs/roomlist`)
     .then((response) => response.data);
 };
+
+type CheckChatList = [string, string];
+
+export const getChatList = ({ queryKey }: any) => {
+  const [_, roomPk] = queryKey;
+  return axiosInstance
+    .get(`/direct_msgs/${roomPk}/chatlist`)
+    .then((response) => response.data);
+};
