@@ -5,7 +5,7 @@ import useUser from "../../lib/useUser";
 import { IChatRoomList } from "../../types";
 import { getChatRoomList } from "../../api";
 import ProtectedPage from "../ProtectedPage";
-import Chat from "../ChatList";
+import Chat from "../Chat";
 import { useEffect, useRef, useState } from "react";
 
 export default function ChatList() {
@@ -19,7 +19,9 @@ export default function ChatList() {
     getChatRoomList,
     { onSuccess: setChatRoomList }
   );
+
   const params = useParams();
+  const roomPk = params.chatRoomPk;
   const { userLoading, user } = useUser();
   const socketRef = useRef<WebSocket | null>(null);
   const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -37,7 +39,7 @@ export default function ChatList() {
             JSON.stringify({
               type: "read_msg",
               sender: sender,
-              room: params.chatRoomPk,
+              room: roomPk,
             })
           );
         }
@@ -64,12 +66,9 @@ export default function ChatList() {
         } else if (new_chat.type === "update_read") {
           setRead(true);
         }
-
         // } else if (new_chat.type == "update_count") {
         //   console.log("update_count", "11");
         //   const updatedChatRoomList = chatRoomList.map((room: any) => {
-        //     console.log("room.id", room.id);
-        //     console.log("parmas", params);
         //     if (room.id == params.chatRoomPk) {
         //       return {
         //         ...room,
@@ -87,8 +86,7 @@ export default function ChatList() {
         socketRef.current?.close();
       };
     }
-  }, [userLoading, chatRoomList, user]);
-  useEffect(() => {}, [unReadCount]);
+  }, [userLoading, chatRoomList, user, roomPk]);
   return (
     <ProtectedPage>
       <Container h={"80vh"} maxW="container.xl">
@@ -105,7 +103,11 @@ export default function ChatList() {
                   <Chat
                     key={index}
                     id={room.id}
-                    unread_messages={room.unread_messages}
+                    unread_messages={
+                      room.id != roomPk
+                        ? room.unread_messages
+                        : (room.unread_messages = 0)
+                    }
                     users={room.users}
                     lastMessage={room.lastMessage}
                     updated_at={room.updated_at}

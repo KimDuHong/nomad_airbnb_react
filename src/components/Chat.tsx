@@ -1,25 +1,17 @@
 import {
   Avatar,
   Box,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
   Heading,
   HStack,
-  Image,
   ListItem,
-  Stack,
-  StackDivider,
   Text,
-  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import useUser from "../lib/useUser";
 import { IChatRoomList } from "../types";
 
-export default function ChatList({
+export default function Chat({
   id,
   users,
   lastMessage,

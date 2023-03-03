@@ -83,7 +83,6 @@ const ChatRoom = (): JSX.Element => {
 
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data) as Message;
-      console.log(data);
       if (Array.isArray(data)) {
         setMessages(data.reverse());
       } else {
