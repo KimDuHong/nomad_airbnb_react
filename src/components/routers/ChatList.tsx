@@ -1,6 +1,6 @@
 import { Box, Container, Grid, Heading, List, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import useUser from "../../lib/useUser";
 import { IChatRoomList } from "../../types";
 import { getChatRoomList } from "../../api";
@@ -10,19 +10,21 @@ import { useEffect, useRef, useState } from "react";
 
 export default function ChatList() {
   const navigate = useNavigate();
-  const { isLoading, data } = useQuery(["chatRoomList"], getChatRoomList);
-  const handleChatClick = (id: string) => {
-    navigate(`/chat/${id}`);
-  };
+  const { user: username } = useUser();
+  const sender = username?.username;
+
+  const [chatRoomList, setChatRoomList] = useState<IChatRoomList[]>([]);
+  const { isLoading, data } = useQuery<IChatRoomList[]>(
+    ["chatRoomList"],
+    getChatRoomList,
+    { onSuccess: setChatRoomList }
+  );
+  const params = useParams();
   const { userLoading, user } = useUser();
   const socketRef = useRef<WebSocket | null>(null);
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [chatRoomList, setChatRoomList] = useState<IChatRoomList[]>([]);
-
-  useEffect(() => {
-    setChatRoomList(data);
-  }, [isLoading]);
-
+  const [read, setRead] = useState(false);
+  const [unReadCount, setUnReadCount] = useState(0);
   useEffect(() => {
     if (user) {
       const socketUrl = `ws://127.0.0.1:8000/notifications?user=${user.id}`;
@@ -30,30 +32,63 @@ export default function ChatList() {
       setSocket(socketRef.current);
 
       socketRef.current.onopen = () => {
-        socketRef.current?.send(JSON.stringify({ type: "loadChatHistory" }));
+        if (params) {
+          socketRef.current?.send(
+            JSON.stringify({
+              type: "read_msg",
+              sender: sender,
+              room: params.chatRoomPk,
+            })
+          );
+        }
       };
 
       socketRef.current.onmessage = (event) => {
         const new_chat = JSON.parse(event.data);
+        console.log("ChatNoti", new_chat);
         if (new_chat.type === "new_data") {
           // Update the chat room list with the new last message
           const updatedChatRoomList = chatRoomList.map((room: any) => {
             if (room.id === new_chat.room_id) {
-              return { ...room, lastMessage: new_chat.text };
+              return {
+                ...room,
+                lastMessage: new_chat.text,
+                unread_messages: new_chat.unread_count,
+                updated_at: new_chat.updated_at,
+              };
             } else {
               return room;
             }
           });
           setChatRoomList(updatedChatRoomList);
+        } else if (new_chat.type === "update_read") {
+          setRead(true);
         }
+
+        // } else if (new_chat.type == "update_count") {
+        //   console.log("update_count", "11");
+        //   const updatedChatRoomList = chatRoomList.map((room: any) => {
+        //     console.log("room.id", room.id);
+        //     console.log("parmas", params);
+        //     if (room.id == params.chatRoomPk) {
+        //       return {
+        //         ...room,
+        //         unread_messages: 0,
+        //       };
+        //     } else {
+        //       return room;
+        //     }
+        //   });
+        //   setChatRoomList(updatedChatRoomList);
+        // }
       };
 
       return () => {
         socketRef.current?.close();
       };
     }
-  }, [userLoading, chatRoomList]);
-
+  }, [userLoading, chatRoomList, user]);
+  useEffect(() => {}, [unReadCount]);
   return (
     <ProtectedPage>
       <Container h={"80vh"} maxW="container.xl">
@@ -79,7 +114,7 @@ export default function ChatList() {
               </List>
             )}
           </Container>
-          <Outlet />
+          <Outlet context={{ read, setRead }} />
         </Grid>
       </Container>
     </ProtectedPage>

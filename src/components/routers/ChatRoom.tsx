@@ -16,13 +16,17 @@ import ChatMessage from "../ChatMessage";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getChatList } from "../../api";
 import { IChatRoomOwner } from "../../types";
-import { isDisabled } from "@testing-library/user-event/dist/utils";
-
+import { useOutletContext } from "react-router-dom";
+import { useDidMountEffect } from "../../lib/useDidMountEffect";
 type Message = {
   sender: IChatRoomOwner;
   text: string;
   chatting_count: number;
   is_read: boolean;
+};
+type context = {
+  setRead: Function;
+  read: boolean;
 };
 
 const ChatRoom = (): JSX.Element => {
@@ -35,7 +39,22 @@ const ChatRoom = (): JSX.Element => {
   const sender = user?.username;
   const QueryClient = useQueryClient();
   const chatBoxRef = useRef<HTMLDivElement>(null);
+  const params = useParams().chatRoomPk;
   const [serverConnect, setServerConnect] = useState(true);
+  const { read, setRead } = useOutletContext<context>();
+  useDidMountEffect(() => {
+    if (read) {
+      setMessages((prevMessages) =>
+        prevMessages.map((message) =>
+          message.sender.username == sender
+            ? { ...message, is_read: true }
+            : message
+        )
+      );
+      setRead(false);
+    }
+  }, [read, sender]);
+
   useEffect(() => {
     {
       socketRef.current?.readyState
@@ -55,19 +74,33 @@ const ChatRoom = (): JSX.Element => {
     socketRef.current = new WebSocket(`ws://127.0.0.1:8000/ws/${chatRoomPk}`);
     setSocket(socketRef.current);
 
-    // // Load chat history
-    // socketRef.current.onopen = () => {
-    //   socketRef.current?.send(JSON.stringify({ type: "loadChatHistory" }));
-    // };
+    // Load chat history
+    socketRef.current.onopen = () => {
+      socketRef.current?.send(
+        JSON.stringify({ type: "read_msg", sender: sender, room: params })
+      );
+    };
 
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data) as Message;
+      console.log(data);
       if (Array.isArray(data)) {
         setMessages(data.reverse());
       } else {
-        setMessages((prevMessages) => [...prevMessages, data]);
+        setMessages((prevMessages) => {
+          const updatedMessages = [...prevMessages, data];
+          if (user?.username !== data.sender.username) {
+            return updatedMessages.map((message) => ({
+              ...message,
+              is_read: true,
+            }));
+          } else {
+            return updatedMessages;
+          }
+        });
       }
     };
+
     // Clean up
     return () => {
       socketRef.current?.close();
@@ -77,7 +110,7 @@ const ChatRoom = (): JSX.Element => {
   const { isLoading, data } = useQuery<Message[]>(
     [`chatList`, chatRoomPk],
     getChatList,
-    { onSuccess: setMessages }
+    { onSuccess: setMessages, cacheTime: 0 }
   );
 
   useEffect(() => {
@@ -90,11 +123,7 @@ const ChatRoom = (): JSX.Element => {
     // Clear messages when chat room changes
     setMessages([]);
   }, [chatRoomPk]);
-  if (socketRef.current?.readyState) {
-    console.log("True");
-  } else {
-    console.log("False");
-  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Link to="/chat">
