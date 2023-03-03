@@ -47,7 +47,6 @@ export default function ChatList() {
 
       socketRef.current.onmessage = (event) => {
         const new_chat = JSON.parse(event.data);
-        console.log("ChatNoti", new_chat);
         if (new_chat.type === "new_data") {
           // Update the chat room list with the new last message
           const updatedChatRoomList = chatRoomList.map((room: any) => {
