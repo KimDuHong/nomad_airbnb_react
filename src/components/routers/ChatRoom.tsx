@@ -23,6 +23,7 @@ type Message = {
   text: string;
   chatting_count: number;
   is_read: boolean;
+  time: string;
 };
 type context = {
   setRead: Function;
@@ -126,7 +127,7 @@ const ChatRoom = (): JSX.Element => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Link to="/chat">
-        <Button position={"absolute"} left={"50%"} colorScheme="red">
+        <Button position={"absolute"} left={"50%"} colorScheme="red" zIndex={1}>
           접기
         </Button>
       </Link>
@@ -151,6 +152,7 @@ const ChatRoom = (): JSX.Element => {
                     message={message}
                     isSentByCurrentUser={true}
                     isRead={message.is_read}
+                    time={message.time}
                   />
                 </Box>
               ) : (
@@ -159,6 +161,7 @@ const ChatRoom = (): JSX.Element => {
                     message={message}
                     isSentByCurrentUser={false}
                     isRead={message.is_read}
+                    time={message.time}
                   />
                 </Box>
               )
